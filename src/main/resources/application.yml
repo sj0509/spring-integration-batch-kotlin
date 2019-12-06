@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: reader-writer-service
+
+  batch:
+    job:
+      enabled: false
+
+server:
+  port: 8500
+
+
+logging:
+  level:
+    root: ERROR
+    com.sjtech: DEBUG
+
+
+coindump:
+  dir:
+    incoming: 'C:\\work\\filewatch\\incoming'
+    archive: 'C:\\work\\filewatch\\archive'

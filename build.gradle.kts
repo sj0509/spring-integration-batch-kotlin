@@ -41,7 +41,10 @@ dependencies {
     testImplementation("io.projectreactor:reactor-test")
     testImplementation("org.springframework.batch:spring-batch-test")
     testImplementation("org.springframework.integration:spring-integration-test")
+
+    runtimeOnly("com.h2database:h2:1.4.200")
 }
+
 
 tasks.withType<Test> {
     useJUnitPlatform()

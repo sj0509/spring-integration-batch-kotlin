@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <property name="LOG_PATH" value="c:\\logs"/>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>
+                %d{dd-MM-yyyy HH:mm:ss.SSS} %magenta([%thread]) %highlight(%-5level) %logger.%M - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <appender name="SAVE-TO-FILE"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/log.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>
+                %d{dd-MM-yyyy HH:mm:ss.SSS} [%thread] %-5level %logger{36}.%M - %msg%n
+            </Pattern>
+        </encoder>
+
+        <!-- Comment out rolling policies to test how the remaining one works -->
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- rollover daily & on size-->
+            <maxFileSize>100MB</maxFileSize>
+            <fileNamePattern>
+                ${LOG_PATH}/archived/log_%d{dd-MM-yyyy}_%i.log
+            </fileNamePattern>
+            <maxHistory>10</maxHistory>
+            <totalSizeCap>1000MB</totalSizeCap>
+        </rollingPolicy>
+
+    </appender>
+
+    <appender name="ASYNC_FILE"
+              class="ch.qos.logback.classic.AsyncAppender">
+        <discardingThreshold>20
+        </discardingThreshold> <!-- default 20, means drop lower event when has 20% capacity remaining -->
+        <appender-ref ref="SAVE-TO-FILE"/>
+        <queueSize>256</queueSize> <!-- default 256 -->
+        <includeCallerData>false</includeCallerData><!-- default false -->
+        <neverBlock>false</neverBlock><!-- default false, set to true to cause
+        the Appender not block the application and just drop the messages -->
+    </appender>
+
+    <springProfile name="default, dev">
+        <root level="INFO">
+            <appender-ref ref="STDOUT"/>
+            <appender-ref ref="ASYNC_FILE"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="prod">
+        <root level="INFO">
+            <appender-ref ref="ASYNC_FILE"/>
+        </root>
+    </springProfile>
+
+</configuration>
