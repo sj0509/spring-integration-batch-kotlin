@@ -8,8 +8,9 @@ data class Trade(
         var amount: Double? = null,
         var total: Double? = null,
         var fee: Double? = null,
-        var feeCoin: String? = null
+        var feeCoin: String? = null,
+        val jobID: Long = 0
 ) {
 
-    constructor() : this(null, null, null, null, null, null, null, null)
+    constructor() : this(null, null, null, null, null, null, null, null, 0)
 }

@@ -9,6 +9,7 @@ import org.springframework.batch.core.configuration.annotation.StepBuilderFactor
 import org.springframework.batch.core.configuration.annotation.StepScope
 import org.springframework.batch.core.launch.support.RunIdIncrementer
 import org.springframework.batch.item.ItemWriter
+import org.springframework.batch.item.data.MongoItemWriter
 import org.springframework.batch.item.file.FlatFileItemReader
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper
 import org.springframework.batch.item.file.mapping.DefaultLineMapper
@@ -19,14 +20,18 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.io.FileSystemResource
 import org.springframework.core.task.TaskExecutor
+import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor
 
 @Configuration
 class BatchJobConfig(private val jobBuilderFactory: JobBuilderFactory,
                      private val jobCompletionNotificationListener: JobCompletionNotificationListener,
+                     private val stepNotificationListener: StepNotificationListener,
                      private val tradesListWriter: TradesListWriter<Trade>,
-                     private val log: Logger,
-                     private val stepBuilderFactory: StepBuilderFactory) {
+                     private val mongoTemplate: MongoTemplate,
+                     private val stepBuilderFactory: StepBuilderFactory,
+                     private val log: Logger) {
+
 
     @Bean
     fun readCsvFilesJob(): Job {
@@ -45,10 +50,17 @@ class BatchJobConfig(private val jobBuilderFactory: JobBuilderFactory,
         return stepBuilderFactory["step1"]
                 .chunk<Trade, Trade>(100)
                 .reader(reader(""))
-                .processor(TradeProcessor())
+                .processor(processor())
                 .writer(compositeItemWriter())
+                .listener(stepNotificationListener)
                 .taskExecutor(threadPoolTaskExecutor())
                 .build()
+    }
+
+    @Bean
+    @StepScope
+    fun processor(): TradeProcessor {
+        return TradeProcessor()
     }
 
     @Bean
@@ -77,8 +89,7 @@ class BatchJobConfig(private val jobBuilderFactory: JobBuilderFactory,
                     }
                 })
             }
-        }
-        )
+        })
 
         return reader
     }
@@ -93,7 +104,15 @@ class BatchJobConfig(private val jobBuilderFactory: JobBuilderFactory,
     @Bean
     fun compositeItemWriter(): ItemWriter<in Trade> {
         val compositeItemWriter: CompositeItemWriter<Trade> = CompositeItemWriter()
-        compositeItemWriter.setDelegates(listOf(tradesListWriter))
+        compositeItemWriter.setDelegates(listOf(tradesListWriter, mongoWriter()))
         return compositeItemWriter
+    }
+
+    @Bean
+    fun mongoWriter(): MongoItemWriter<Trade> {
+        val writer: MongoItemWriter<Trade> = MongoItemWriter()
+        writer.setTemplate(mongoTemplate)
+        writer.setCollection("trades")
+        return writer
     }
 }

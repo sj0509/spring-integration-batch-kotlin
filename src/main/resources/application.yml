@@ -6,6 +6,14 @@ spring:
     job:
       enabled: false
 
+
+  data:
+    mongodb:
+      database: tradesDB
+      host: localhost
+      port: 27017
+
+
 server:
   port: 8500
 

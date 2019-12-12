@@ -35,6 +35,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
     implementation("org.springframework.integration:spring-integration-file:5.2.1.RELEASE")
     implementation("org.springframework.batch:spring-batch-integration:4.1.2.RELEASE")
+    implementation("org.springframework.data:spring-data-mongodb:2.2.3.RELEASE")
 
 
     developmentOnly("org.springframework.boot:spring-boot-devtools")
