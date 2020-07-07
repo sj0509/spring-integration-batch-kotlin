@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import kotlin.collections.mapOf
 
 plugins {
     id("org.springframework.boot") version "2.2.2.RELEASE"
@@ -44,7 +45,7 @@ dependencies {
     implementation("org.springframework.integration:spring-integration-file:5.2.1.RELEASE")
     implementation("org.springframework.batch:spring-batch-integration:4.1.2.RELEASE")
     implementation("org.springframework.data:spring-data-mongodb:2.2.3.RELEASE")
-
+    implementation("org.flywaydb:flyway-core:6.2.1")
 
     developmentOnly("org.springframework.boot:spring-boot-devtools")
 
@@ -70,4 +71,12 @@ tasks.withType<KotlinCompile> {
         freeCompilerArgs = listOf("-Xjsr305=strict")
         jvmTarget = "1.8"
     }
+}
+
+flyway {
+    url = "jdbc:mysql://localhost:3306/crypto"
+    user = "root"
+    password = "admin05"
+    schemas = arrayOf("crypto")
+    placeholders = mapOf("schema" to "CRYPTO")
 }

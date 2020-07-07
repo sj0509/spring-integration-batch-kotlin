@@ -16,7 +16,7 @@ spring:
   jpa:
     show-sql: false
     hibernate:
-      ddl-auto: create
+      ddl-auto: validate
     generate-ddl: true
     database: mysql
     properties:
@@ -29,6 +29,21 @@ spring:
       host: localhost
       port: 27017
 
+  flyway:
+    user: root
+    password: admin05
+    group: true
+    url: 'jdbc:mysql://${MYSQL_HOST:localhost}:3306/crypto'
+    locations: classpath:db/migration
+    schemas: crypto
+    placeholders:
+      schema: 'CRYPTO'
+    baseline-on-migrate: true
+    baseline-description: 'Base Version'
+    baseline-version: 1.0.0
+    table: 'FLYWAY_SCHEMA_HISTORY'
+
+
 
 server:
   port: 8500
@@ -39,6 +54,7 @@ logging:
     root: ERROR
     com.sjtech: DEBUG
     org.springframework: INFO
+    org.flywaydb: INFO
 
 
 coindump:
