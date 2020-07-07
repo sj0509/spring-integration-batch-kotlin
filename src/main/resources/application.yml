@@ -2,10 +2,26 @@ spring:
   application:
     name: reader-writer-service
 
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 100MB
+      max-request-size: 100MB
+
   batch:
     job:
       enabled: false
+    initialize-schema: always
 
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: create
+    generate-ddl: true
+    database: mysql
+    properties:
+      hibernate:
+        default_schema: DBO
 
   data:
     mongodb:
@@ -22,9 +38,19 @@ logging:
   level:
     root: ERROR
     com.sjtech: DEBUG
+    org.springframework: INFO
 
 
 coindump:
   dir:
     incoming: 'C:\\work\\filewatch\\incoming'
     archive: 'C:\\work\\filewatch\\archive'
+
+
+service:
+  datasource:
+    trade:
+      username: root
+      url: 'jdbc:mysql://${MYSQL_HOST:localhost}:3306/crypto'
+      driverClassName: com.mysql.cj.jdbc.Driver
+      type: com.zaxxer.hikari.HikariDataSource

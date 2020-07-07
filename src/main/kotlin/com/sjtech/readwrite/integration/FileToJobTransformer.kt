@@ -1,6 +1,6 @@
 package com.sjtech.readwrite.integration
 
-import com.sjtech.readwrite.AppUtils
+import com.sjtech.readwrite.common.utils.ServiceUtils
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.JobParametersBuilder
 import org.springframework.batch.integration.launch.JobLaunchRequest
@@ -25,7 +25,7 @@ class FileToJobTransformer {
         val fileName = aFile.absolutePath
         val jobParameters = JobParametersBuilder()
                 .addString("fileName", fileName)
-                .addLong("jobID", AppUtils.generateJobID())
+                .addLong("jobID", ServiceUtils.generateJobID())
                 .toJobParameters()
         return JobLaunchRequest(job!!, jobParameters)
     }

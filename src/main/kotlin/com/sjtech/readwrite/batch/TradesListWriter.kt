@@ -1,7 +1,7 @@
 package com.sjtech.readwrite.batch
 
-import com.sjtech.readwrite.constants.ReadWriteConstants.TRADE_MAP
-import com.sjtech.readwrite.model.Trade
+import com.sjtech.readwrite.common.constants.ServiceApplicationObjects.TRADE_MAP
+import com.sjtech.readwrite.db.entity.Trade
 import org.slf4j.Logger
 import org.springframework.batch.core.configuration.annotation.StepScope
 import org.springframework.batch.item.ItemWriter
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component
 class TradesListWriter<T>(private val log: Logger) : ItemWriter<Trade> {
 
     @Value("#{jobParameters['jobID']}")
-    lateinit var jobId: String
+    var jobId: Long = 0
 
     override fun write(items: MutableList<out Trade>) {
 
